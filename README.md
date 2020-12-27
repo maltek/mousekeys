@@ -12,7 +12,9 @@ To install:
 
     make && sudo make install
 
-To run it afterwards without unplugging and replugging your mouse:
+
+It will automatically run through udev for each mouse that is plugged in
+afterwards. To run it immediately without unplugging and replugging your mouse:
 
     printf "%s\n" /dev/input/by-path/*event-mouse | awk -F/ '{print "mousekeys@" substr($5, 0, length($5) - 12) ".service" }' | sudo xargs systemctl restart
 
