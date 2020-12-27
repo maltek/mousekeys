@@ -1,0 +1,8 @@
+[Unit]
+Description=Simulate key strokes on mouse events
+ConditionPathIsSymbolicLink=/dev/input/by-path/%i-event-mouse
+
+[Service]
+ExecStart=/usr/local/libexec/mousekeys /dev/input/by-path/%i-event-mouse
+Restart=on-failure
+RestartSec=5s
