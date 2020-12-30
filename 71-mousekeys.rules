@@ -1,2 +1,2 @@
-ENV{ID_INPUT_MOUSE}=="1", ACTION=="add",    RUN+="/usr/bin/systemctl start mousekeys@$env{ID_PATH}.service"
-ENV{ID_INPUT_MOUSE}=="1", ACTION=="remove", RUN+="/usr/bin/systemctl stop  mousekeys@$env{ID_PATH}.service"
+ENV{ID_INPUT_MOUSE}=="1", ACTION=="add",    RUN+="/usr/bin/systemctl --no-block start mousekeys@$env{ID_PATH}.service"
+ENV{ID_INPUT_MOUSE}=="1", ACTION=="remove", RUN+="/usr/bin/systemctl --no-block stop  mousekeys@$env{ID_PATH}.service"
