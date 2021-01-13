@@ -1,4 +1,4 @@
-override CFLAGS := -Wall -Wextra -std=c11 -g $(CFLAGS)
+override CFLAGS := -Wall -Wextra -std=gnu11 -g $(CFLAGS)
 
 .PHONY: all clean install distinst uninstall format
 

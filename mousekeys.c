@@ -84,34 +84,40 @@ destroy_keyboard(void)
 static int
 write_all(int fd, const void* buf, size_t count)
 {
-  int err = 0;
+  int num = 0;
   while (count > 0) {
-    err = write(fd, buf, count);
-    if (err == -1)
+    num = write(fd, buf, count);
+    if (num == -1)
       return -1;
-    count -= err;
+    count -= num;
+    buf += num;
   }
   return 0;
 }
 static void
+put_event(const struct input_event* ev)
+{
+  write_all(uinput_fd, ev, sizeof(*ev));
+  // some apps (Slack) eat keypresses when they happen too quickly
+  usleep(1000);
+}
+
+static void
 press_keys(struct btn_action* what)
 {
-  struct input_event events[32] = { 0 };
-  int cnt = 0;
   for (size_t i = 0; what->keys[i] != 0; i++) {
-    events[cnt++] =
-      (struct input_event){ .type = EV_KEY, .code = what->keys[i], .value = 1 };
+    put_event(&(struct input_event){
+      .type = EV_KEY, .code = what->keys[i], .value = 1 });
   }
-  events[cnt++] =
-    (struct input_event){ .type = EV_SYN, .code = SYN_REPORT, .value = 0 };
+  put_event(
+    &(struct input_event){ .type = EV_SYN, .code = SYN_REPORT, .value = 0 });
 
   for (size_t i = 0; what->keys[i] != 0; i++) {
-    events[cnt++] =
-      (struct input_event){ .type = EV_KEY, .code = what->keys[i], .value = 0 };
+    put_event(&(struct input_event){
+      .type = EV_KEY, .code = what->keys[i], .value = 0 });
   }
-  events[cnt++] =
-    (struct input_event){ .type = EV_SYN, .code = SYN_REPORT, .value = 0 };
-  write_all(uinput_fd, &events, cnt * sizeof(events[0]));
+  put_event(
+    &(struct input_event){ .type = EV_SYN, .code = SYN_REPORT, .value = 0 });
 }
 
 /**
